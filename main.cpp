@@ -38,9 +38,7 @@ int main()
 			cout << "What would you like to label the node? (a-t):  " << endl;
 			cin >> input;
 			int vnum = input[0] - 97;
-			cout << vnum << endl;
 			graph[vnum][vnum] = 0;
-			cout << graph[vnum][vnum] << endl;
 		}
 		else if (strcmp(input, "ADDE") == 0) { // addedge
 			cout << "Enter the first node's name (a-t):  " << endl;
@@ -53,9 +51,7 @@ int main()
 				cout << "Enter a weight between the two nodes:  " << endl;
 				int w;
 				cin >> w;
-				cout << node1 << " " << node2 << " " << w << endl;
 				graph[node1][node2] = w;
-				cout << graph[node1][node2] << endl;
 			}
 			else {
 				cout << "node doesn't exist" << endl;
@@ -87,38 +83,58 @@ int main()
 			cout << "Enter the second node's name (a-t):  " << endl;
 			cin >> input;
 			int node2 = input[0] - 97;
-			//dickstraw
-			bool visited[20];
-			for (int i = 0; i < 20; i++) {
-				visited[i] = false;
-			}
-			int vdist[2][20];
-			for (int j = 0; j < 20; j++) {
-				vdist[0][j] = INT_MAX;
-				vdist[1][j] = -1;
-			}
-			vdist[0][node1] = 0;
-			while (true) {
-				int currentnode = -1;
-				int lowestdist = INT_MAX;
-				for (int i = 0; i < 20; i++) { // lowest unvisited
-					if (visited[i] == false && vdist[0][i] < lowestdist) {
-						currentnode = i;
-						lowestdist = vdist[0][i];
+			if (graph[node1][node1] != -1 && graph[node2][node2] != -1) {
+				//dickstraw
+				bool visited[20];
+				for (int i = 0; i < 20; i++) {
+					visited[i] = false;
+				}
+				int vdist[2][20];
+				for (int j = 0; j < 20; j++) {
+					vdist[0][j] = INT_MAX;
+					vdist[1][j] = -1;
+				}
+				vdist[0][node1] = 0;
+				while (true) {
+					int currentnode = -1;
+					int lowestdist = INT_MAX;
+					for (int i = 0; i < 20; i++) { // lowest unvisited
+						if (visited[i] == false && vdist[0][i] < lowestdist) {
+							currentnode = i;
+							lowestdist = vdist[0][i];
+						}
 					}
-				}
-				if (currentnode == -1) {
-					break;
-				}
-				for (int i = 0; i < 20; i++) { // unvisited neighbors
-					if (i != currentnode && visited[i] == false && graph[currentnode][i] != -1) {
-						vdist[0][i] = vdist[0][currentnode] + graph[currentnode][i];
-						vdist[1][i] = currentnode;
+					if (currentnode == -1) {
+						break;
 					}
+					for (int i = 0; i < 20; i++) { // unvisited neighbors
+						if (i != currentnode && visited[i] == false && graph[currentnode][i] != -1) {
+							if (vdist[0][currentnode] + graph[currentnode][i] < vdist[0][i]) {
+								vdist[0][i] = vdist[0][currentnode] + graph[currentnode][i];
+								vdist[1][i] = currentnode;
+							}
+						}
+					}
+					visited[currentnode] = true;
 				}
-				visited[currentnode] = true;
+				if (vdist[0][node2] >= INT_MAX) {
+					cout << "no path" << endl;
+				}
+				else {
+					cout << "Length: " << vdist[0][node2] << endl;
+					int point = node2;
+					cout << "Path: ";
+					while (point != -1) {
+						char c = 'a';
+						cout << (char)(c + point) << "<-";
+						point = vdist[1][point];
+					}
+					cout << endl;
+				}
 			}
-			cout << vdist[0][node2] << endl;
+			else {
+				cout << "node doesn't exist" << endl;
+			}
 		}
 		else if (strcmp(input, "PRINT") == 0) { // printadjacencytable
 			for (int i = 0; i < 20; i++) {
